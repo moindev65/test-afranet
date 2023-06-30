@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bins
+data:
+  hello: |
+    #!/bin/bash
+    touch sql.sql
+    echo 'select * from weather;' >sql.sql
+    mysql -h mysql-db -u "root" "-p123" "local_db" < sql.sql
+     
+    tail -f /dev/null
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: logger
+  name: logger
+spec:
+  containers:
+  - image: ubuntu/mysql
+    name: logger
+    command:
+       - /usr/local/bin/hello
+    volumeMounts:
+    - name: bins
+      mountPath: /usr/local/bin
+  volumes:
+  - name: bins
+    configMap:
+      name: bins
+      defaultMode: 0777

@@ -1,0 +1,59 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-db
+  labels:
+    app: mysql-db
+spec:
+  clusterIP: None
+  ports:
+    - port: 3306
+  selector:
+    app: mysql-db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: default
+  name: mysql-db
+  labels:
+    app: mysql-db
+spec:
+  serviceName: mysql-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-db
+  template:
+    metadata:
+      labels:
+        app: mysql-db
+    spec:
+      containers:
+        - name: mysql-db
+          env:
+            - name: MYSQL_DATABASE
+              value: "local_db"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123"
+            - name: MYSQL_USER
+              value: "abc"
+            - name: MYSQL_PASSWORD
+              value: "123"
+          image: docker.io/moindev65/weather:2.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: "/var/lib/mysql"
+              name: mysql-db
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-db
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 512Mi
+---
