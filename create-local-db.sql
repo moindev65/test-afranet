@@ -17,3 +17,4 @@ CREATE TABLE weather (
 );
 
 INSERT INTO weather VALUES(1, 'Tehran',23,'69%');
+INSERT INTO weather VALUES(1, 'Berlin',10,'40%');
