@@ -48,12 +48,8 @@ spec:
           volumeMounts:
             - mountPath: "/var/lib/mysql"
               name: mysql-db
-  volumeClaimTemplates:
-    - metadata:
-        name: mysql-db
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 512Mi
----
+      volumes:
+      - name: mysql-db
+        hostPath:
+          path: /root/data
+          type: Directory
